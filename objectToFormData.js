@@ -2,7 +2,6 @@ const values = {
 	photos: [
 		new File(["mountains"], "mountains.jpg"),
 		new File(["building"], "building.jpg"),
-		new File(["selfie"], "ToFormData/images/WP_20160708_19_58_01_Selfie.jpg"),
 	],
 	brokerfee: "55",
 	address: "12 York Street",
