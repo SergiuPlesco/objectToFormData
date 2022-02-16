@@ -48,29 +48,34 @@ const values = {
 };
 
 function objectToFormData(obj, formData, name) {
-	let fd = formData || new FormData();
-	let keyName;
+  let fd = formData || new FormData();
+  let keyName;
 
-	for (let objKey in obj) {
-		keyName = name ? `${name}[${objKey}]` : objKey;
-		if (Array.isArray(obj[`${objKey}`]) && !obj[objKey] instanceof File) {
-			const arr = obj[`${objKey}`];
-			arr.forEach((obj, index) => {
-				let tempKeyName = `${keyName}[${index}]`;
-				objectToFormData(obj, fd, tempKeyName);
-			});
-		} else if (obj[objKey] instanceof File) {
-			console.log("file", obj[objKey]);
-			// objectToFormData(obj[objKey], fd, keyName);
-			fd.append(`${keyName}[name]`, obj[objKey].name);
-		} else if (typeof obj[objKey] === "object") {
-			objectToFormData(obj[objKey], fd, keyName);
-		} else {
-			fd.append(keyName, obj[objKey]);
-		}
-	}
+  for (let objKey in obj) {
+    keyName = name ? `${name}[${objKey}]` : objKey;
+    if (obj[objKey] instanceof File) {
+      fd.append(decamelize(`${keyName}`), obj[objKey]);
+    } else if (
+      Array.isArray(obj[`${objKey}`]) &&
+      !obj[objKey] instanceof File
+    ) {
+      const arr = obj[`${objKey}`];
+      arr.forEach((obj, index) => {
+        let tempKeyName = `${keyName}[${index}]`;
+        objectToFormData(obj, fd, tempKeyName);
+      });
+    } else if (typeof obj[objKey] === "object") {
+      objectToFormData(obj[objKey], fd, keyName);
+    } else {
+      if (!obj[objKey]) {
+        fd.append(decamelize(`${keyName}`), "");
+      } else {
+        fd.append(decamelize(`${keyName}`), obj[objKey]);
+      }
+    }
+  }
 
-	return fd;
+  return fd;
 }
 
 const serializedFd = objectToFormData(values);
