@@ -47,6 +47,7 @@ const values = {
 	],
 };
 
+// Recursive function to flatten nested form values object for FormData
 function objectToFormData(obj, formData, name) {
   let fd = formData || new FormData();
   let keyName;
@@ -54,7 +55,7 @@ function objectToFormData(obj, formData, name) {
   for (let objKey in obj) {
     keyName = name ? `${name}[${objKey}]` : objKey;
     if (obj[objKey] instanceof File) {
-      fd.append(decamelize(`${keyName}`), obj[objKey]);
+      fd.append(keyName, obj[objKey]);
     } else if (
       Array.isArray(obj[`${objKey}`]) &&
       !obj[objKey] instanceof File
@@ -68,13 +69,12 @@ function objectToFormData(obj, formData, name) {
       objectToFormData(obj[objKey], fd, keyName);
     } else {
       if (!obj[objKey]) {
-        fd.append(decamelize(`${keyName}`), "");
+        fd.append(keyName, "");
       } else {
-        fd.append(decamelize(`${keyName}`), obj[objKey]);
+        fd.append(keyName, obj[objKey]);
       }
     }
   }
-
   return fd;
 }
 
